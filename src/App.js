@@ -88,13 +88,7 @@ const App = () => {
           backstory: agent.backstory,
           id: agent.id
         }
-        if (prop === 'role') {
-          updatedAgent['role'] = value;
-        } else if (prop === 'goal') {
-          updatedAgent['goal'] = value;
-        } else if (prop === 'backstory') {
-          updatedAgent['backstory'] = value;
-        }
+        updatedAgent[prop] = value;
         updatedAgents.push(updatedAgent);
       } else {
         updatedAgents.push(agent);
@@ -112,11 +106,7 @@ const App = () => {
           description: task.description,
           id: task.id
         }
-        if (prop === 'role') {
-          updatedTask['role'] = value;
-        } else if (prop === 'description') {
-          updatedTask['description'] = value;
-        } 
+        updatedTask[prop] = value;
         updatedTasks.push(updatedTask);
       } else {
         updatedTasks.push(task);
@@ -131,7 +121,7 @@ const App = () => {
     
     // comment out below then submit it as body data in request with stringify
     // then turn back to json in python
-    
+
     // const allData = {
     //   agents,
     //   tasks
