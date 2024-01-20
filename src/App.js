@@ -128,6 +128,16 @@ const App = () => {
   const submitData = () => {
     console.log(agents);
     console.log(tasks);
+    
+    // comment out below then submit it as body data in request with stringify
+    // then turn back to json in python
+    
+    // const allData = {
+    //   agents,
+    //   tasks
+    // };
+
+
     // setData("Loading...");
     // fetch('http://127.0.0.1:5000/api', {
     //     method: "POST", // *GET, POST, PUT, DELETE, etc.
