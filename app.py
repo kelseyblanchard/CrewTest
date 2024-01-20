@@ -39,6 +39,7 @@ def input():
                     role = parts[0].split(':')[1].strip()  # Corrected index for role
                     goal = parts[1].strip()
                     backstory = parts[2].strip() if len(parts) > 2 else "N/A"
+                    print(f"[AGENT]: {role}")
                     agents[role] = Agent(
                         role=role,
                         goal=goal,
@@ -60,20 +61,13 @@ def input():
             if not agents or not tasks:
                 debug_str = "\n".join(debug_info)
                 return f"No valid agents or tasks were created. Please check the input format.\nDebug info:\n{debug_str}"
-
+            print(agents)
             crew = Crew(agents=list(agents.values()), tasks=tasks, verbose=2)
             result = crew.kickoff()
-            time.sleep(300000)
-            print(str(result))
-            return "running"
+            return result
         except Exception as e:
             debug_str = "\n".join(debug_info)
             return f"Error: {e}\nDebug info:\n{debug_str}"
-
-        # return request.data
-    # data = request  # Get JSON data sent with POST
-    # print(data)
-    # return data
 
 if __name__ == "__main__":
     app.run()
