@@ -63,17 +63,10 @@ def input():
 
             crew = Crew(agents=list(agents.values()), tasks=tasks, verbose=2)
             result = crew.kickoff()
-            time.sleep(300000)
-            print(str(result))
-            return "running"
+            return result
         except Exception as e:
             debug_str = "\n".join(debug_info)
             return f"Error: {e}\nDebug info:\n{debug_str}"
-
-        # return request.data
-    # data = request  # Get JSON data sent with POST
-    # print(data)
-    # return data
 
 if __name__ == "__main__":
     app.run()
