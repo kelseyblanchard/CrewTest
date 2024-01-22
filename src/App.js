@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
 
@@ -17,7 +16,7 @@ const createKey = () => {
 
 const AgentRow = (props) => {
   return (
-    <div style={{width: '100%', display: 'inline-block', display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', marginBottom: '5px'}}>
+    <div style={{width: '100%', display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', marginBottom: '5px'}}>
       <input value="AGENT" disabled style={{ height: '50px', textAlign: 'center' }} />
       <textarea placeholder="Role" value={props.role} onChange={(e) => props.updateAgent(props.id, 'role', e.target.value)} style={{ height: '50px' }} />
       <textarea placeholder="Goal" value={props.goal} onChange={(e) => props.updateAgent(props.id, 'goal', e.target.value)} style={{ height: '50px' }} />
@@ -29,7 +28,7 @@ const AgentRow = (props) => {
 
 const TaskRow = (props) => {
   return (
-    <div style={{width: '100%', display: 'inline-block', display: 'grid', gridTemplateColumns: '1fr 1fr 2fr 1fr', marginBottom: '5px'}}>
+    <div style={{width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr 2fr 1fr', marginBottom: '5px'}}>
       <input value="TASK" disabled style={{ height: '50px', textAlign: 'center' }} />
       <textarea placeholder="Role" value={props.role} onChange={(e) => props.updateTask(props.id, 'role', e.target.value)} style={{ height: '50px' }} />
       <textarea placeholder="Description" value={props.goal} onChange={(e) => props.updateTask(props.id, 'description', e.target.value)} style={{ height: '50px' }} />
@@ -41,7 +40,6 @@ const TaskRow = (props) => {
 const App = () => {
 
   const [data, setData] = React.useState("");
-  const [input, setInput] = React.useState("");
   const [agents, setAgents] = React.useState([
     {
       role: "Fact Checker",
@@ -122,35 +120,34 @@ const App = () => {
     // comment out below then submit it as body data in request with stringify
     // then turn back to json in python
 
-    // const allData = {
-    //   agents,
-    //   tasks
-    // };
+    const allData = {
+      agents,
+      tasks
+    };
 
 
-    // setData("Loading...");
-    // fetch('http://127.0.0.1:5000/api', {
-    //     method: "POST", // *GET, POST, PUT, DELETE, etc.
-    //     // mode: "no-cors", // no-cors, *cors, same-origin
-    //     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    //     credentials: "omit", // include, *same-origin, omit
-    //     headers: {
-    //       "Access-Control-Allow-Origin": "*",
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(input)
-    // })
-    //     .then(response => {
-    //       return response.text();
-    //     })
-    //     .then(response => setData(response))
-    //     .catch(err => setData("There was an error."));
+    setData("Loading...");
+    fetch('http://127.0.0.1:5000/api', {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        // mode: "no-cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "omit", // include, *same-origin, omit
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(allData)
+    })
+        .then(response => {
+          return response.text();
+        })
+        .then(response => setData(response))
+        .catch(err => setData(`There was an error: ${err}`));
   }
 
   return (
     <div className="App">
-      <p></p>
-      <textarea type="text" rows={12} value={input} onChange={e => setInput(e.target.value)} style={{width: '600px'}} />
+      <h2>TaskForce AI</h2>
       {agents.map((agent) => (
         <AgentRow role={agent.role} goal={agent.goal} backstory={agent.backstory} id={agent.id} key={agent.id} deleteAgent={deleteAgent} updateAgent={updateAgent} />
       ))}
