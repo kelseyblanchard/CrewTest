@@ -5,7 +5,7 @@ from crewai import Agent, Task, Crew
 from langchain.llms import Ollama
 from langchain.tools import DuckDuckGoSearchRun
 from langchain.agents import load_tools
-import time
+import json
 
 ollama_llm = Ollama(model="openhermes")
 
@@ -22,41 +22,40 @@ def input():
         return "GET"
     else:
         print(request.data)
-        input_data = str(request.data)
+        # return json.loads(request.data)
+        input_data = json.loads(request.data)
         debug_info = []  # Collect debugging information
         try:
-            lines = input_data.split('\\n')
             agents = {}
             tasks = []
             # search_tool = DuckDuckGoSearchRun()
 
-            for line in lines:
-                debug_info.append(f"Processing line: {line}")
-                parts = line.split(';')
-                debug_info.append(f"Split parts: {parts}")
+            inputAgents = input_data['agents']
+            inputTasks = input_data['tasks']
 
-                if line.startswith("Agent:") and len(parts) >= 3:
-                    role = parts[0].split(':')[1].strip()  # Corrected index for role
-                    goal = parts[1].strip()
-                    backstory = parts[2].strip() if len(parts) > 2 else "N/A"
-                    print(f"[AGENT]: {role}")
-                    agents[role] = Agent(
-                        role=role,
-                        goal=goal,
-                        backstory=backstory,
-                        verbose=True,
-                        allow_delegation=False,
-                        llm=ollama_llm
-                    )
-                    debug_info.append(f"Created Agent: {role}")
+            for agent in inputAgents:
+                role = agent['role']
+                goal = agent['goal']
+                backstory = agent['backstory']
+                print(f"[AGENT]: {role}")
+                agents[role] = Agent(
+                    role=role,
+                    goal=goal,
+                    backstory=backstory,
+                    verbose=True,
+                    allow_delegation=False,
+                    llm=ollama_llm
+                )
+                debug_info.append(f"Created Agent: {role}")
 
-                elif line.startswith("Task:") and len(parts) >= 2:
-                    agent_role = parts[0].split(':')[1].strip()  # Correctly identify the agent's role for the task
-                    description = parts[1].strip()
-                    agent = agents.get(agent_role)
-                    if agent:
-                        tasks.append(Task(description=description, agent=agent))
-                        debug_info.append(f"Created Task for {agent_role}: {description}")
+            for task in inputTasks:
+                taskRole = task['role']
+                taskDescription = task['description']
+                print(f"[TASK]: {taskRole}")
+                taskAgent = agents.get(taskRole)
+                if taskAgent:
+                    tasks.append(Task(description=taskDescription, agent=taskAgent))
+                    debug_info.append(f"Created Task for {taskRole}: {taskDescription}")
 
             if not agents or not tasks:
                 debug_str = "\n".join(debug_info)
@@ -65,6 +64,7 @@ def input():
             crew = Crew(agents=list(agents.values()), tasks=tasks, verbose=2)
             result = crew.kickoff()
             return result
+
         except Exception as e:
             debug_str = "\n".join(debug_info)
             return f"Error: {e}\nDebug info:\n{debug_str}"
